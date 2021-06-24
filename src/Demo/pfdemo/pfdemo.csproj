@@ -16,4 +16,13 @@
     <ProjectReference Include="..\..\IflySdk\IflySdk.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="target\TextFile1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="templete\xjzp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

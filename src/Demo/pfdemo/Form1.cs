@@ -31,6 +31,12 @@ namespace pfdemo
         {
             InitializeComponent();
             btnfkhmc.Click += UiButton1_Click;
+            btnskr.Click += UiButton1_Click;
+            btncprzh.Click += UiButton1_Click;
+            btnje.Click += UiButton1_Click;
+            btnyt.Click += UiButton1_Click;
+ 
+
             lblmsg.Visible = false;
             bBusy = false;
             bLR = false;
@@ -41,7 +47,20 @@ namespace pfdemo
 
         private void Form1_ButtonOkClick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string path = System.Environment.CurrentDirectory ;
+                string context = tools.ReadFile(System.Environment.CurrentDirectory + @"\templete\xjzp.txt");
+                string result = context.Replace("年", "谢");
+                string target = System.Environment.CurrentDirectory + @"\target\xjzp_" + Guid.NewGuid().ToString("N")+".txt";
+                tools.WriteFile(target, result);
+                System.Diagnostics.Process.Start("notepad.exe", target);  
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void UiButton1_Click(object sender, EventArgs e)
@@ -64,6 +83,7 @@ namespace pfdemo
                     else
                     {
                         bt.Tag = "true";
+                        bBusy = true;
                         bt.Text = "停止";
                         lblmsg.Visible = true;
                         //启动录音
@@ -88,7 +108,11 @@ namespace pfdemo
                        })
                        .UseMessage((sender, e) =>
                        {
-                           txt.Text = e;
+                           this.Invoke(new EventHandler(delegate
+                           {
+                               txt.Text = e;
+                           }));
+                   
                        })
                        .BuildASR();
 
@@ -103,7 +127,8 @@ namespace pfdemo
                         };
                         wave.RecordingStopped += (s, a) =>
                         {
-                            iat = null;
+                            //iat.Stop();
+                            //iat = null;
                             wave.Dispose();
                         };
                         wave.StartRecording();
