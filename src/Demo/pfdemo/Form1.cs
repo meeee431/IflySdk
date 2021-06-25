@@ -1,4 +1,5 @@
-﻿using IflySdk;
+﻿using Aspose.Words;
+using IflySdk;
 using IflySdk.Enum;
 using IflySdk.Model.Common;
 using NAudio.Wave;
@@ -49,12 +50,47 @@ namespace pfdemo
         {
             try
             {
-                string path = System.Environment.CurrentDirectory ;
-                string context = tools.ReadFile(System.Environment.CurrentDirectory + @"\templete\xjzp.txt");
-                string result = context.Replace("年", "谢");
-                string target = System.Environment.CurrentDirectory + @"\target\xjzp_" + Guid.NewGuid().ToString("N")+".txt";
-                tools.WriteFile(target, result);
-                System.Diagnostics.Process.Start("notepad.exe", target);  
+ 
+
+                if (string.IsNullOrEmpty(je.Text))
+                    throw new Exception("金额不能为空");
+                string path = System.Environment.CurrentDirectory;
+ 
+                Document doc = new Document(path + @"\templete\xjzp.doc");
+                string[] field = new string[] { "年", "月","日", "开户行"
+                ,"收款人","出票人账号","大写金额","用途","小写年","小写月","小写日"
+                ,"收款人2","小写金额","用途2"};
+                List<object> value = new List<object>();
+                NumFormat num2 = new NumFormat();
+                MoneyConvertChinese mc = new MoneyConvertChinese();
+                value.Add(num2.NumToChn(cprq.Value.ToString("yyyy")));
+                value.Add(num2.NumToChn(cprq.Value.ToString("MM")));
+                value.Add(num2.NumToChn(cprq.Value.ToString("dd")));
+
+                value.Add(fkhmc.Text);
+                value.Add(skr.Text);
+                value.Add(cprzh.Text);
+
+                value.Add(mc.MoneyToChinese(je.Text));
+                value.Add(yt.Text);
+                value.Add(cprq.Value.ToString("yyyy"));
+                value.Add(cprq.Value.ToString("MM"));
+                value.Add(cprq.Value.ToString("dd"));
+                value.Add(skr.Text);
+                value.Add(je.Text);
+                value.Add(yt.Text);
+                object[] fv = value.ToArray();
+                doc.MailMerge.Execute(field, fv);
+
+                string path2 =path + @"\target\"+ Guid.NewGuid().ToString("N") + "xjzp.doc";
+ 
+                doc.Save(path2);
+               
+                System.Diagnostics.Process proc = new System.Diagnostics.Process();
+                proc.StartInfo.UseShellExecute = true;
+     
+                proc.StartInfo.FileName = path2;
+                proc.Start();
             }
             catch (Exception ex)
             {
